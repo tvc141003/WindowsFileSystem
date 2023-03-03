@@ -2,9 +2,16 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <sstream>
+using std::stringstream;
 using std::cout, std::endl;
 using std::map;
 using std::string;
+
+#define EOF 0x0fffffff
+#define SUB_ENTRY 0x0f
+#define SECTOR_ROW 32
+#define SECTOR_COLUMN 16
 
 namespace Utils {
 	class Int {
@@ -24,6 +31,15 @@ namespace Utils {
 			}
 
 			return decimal;
+		}
+	};
+	class String {
+	public:
+		static string convertIntToString(int num) {
+			stringstream buffer;
+			buffer << num;
+			string str = buffer.str();
+			return str;
 		}
 	};
 }

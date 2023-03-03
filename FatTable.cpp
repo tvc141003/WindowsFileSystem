@@ -22,6 +22,7 @@ FatTable::~FatTable() {
 }
 
 string FatTable::toString() {
+	cout << this->_numberOfSector << endl;
 	for (int i = 0; i < 32*this->_numberOfSector; i++) {
 		for (int j = 0; j < 16; j++) cout << this->_fatTable[i][j] << ' ';
 		cout << endl;
@@ -31,6 +32,14 @@ string FatTable::toString() {
 
 string**& FatTable::fatTable() {
 	return this->_fatTable;
+}
+
+int FatTable::numberOfSector() {
+	return this->_numberOfSector;
+}
+
+void FatTable::setNumberOfSector(int numberOfSector) {
+	this->_numberOfSector = numberOfSector;
 }
 
 void FatTable::setFatTable(string**& fatTable) {

@@ -11,7 +11,10 @@ public:
 
 public:
 	string**& fatTable();
+	int numberOfSector();
+
 	void setFatTable(string**&);
+	void setNumberOfSector(int);
 
 public:
 	string toString();

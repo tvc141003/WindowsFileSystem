@@ -8,15 +8,11 @@
 #include "BootSector.h"
 #include "IValueMapper.h"
 #include "BootSectorMapper.h"
+#include "FatTableMapper.h"
 #include "Utils.h"
 #include "FatTable.h"
 
 using namespace std;
-
-#define EOF 0x0fffffff
-#define SUB_ENTRY 0x0f
-#define SECTOR_ROW 32
-#define SECTOR_COLUMN 16
 
 string ConvertByteToString(BYTE tempBuf)
 {
@@ -115,6 +111,7 @@ FatTable* getFatTable() {
     string** fatSector = NULL;
     int numberOfSector = 0;
     while (true) {
+        cout << 1 << endl;
         BYTE sector[512];
         int readPoint = (bootSectorMapper["Sb"] + numberOfSector) * 512;
         string** sectors = ReadSector(L"\\\\.\\G:", readPoint, sector);
@@ -144,6 +141,10 @@ FatTable* getFatTable() {
             for (int i = 0; i < SECTOR_ROW * numberOfSector; i++)
                 delete[] newFatSector[i];
             delete[] newFatSector;
+
+            //insert value into new fat table
+            for (int i = SECTOR_ROW * numberOfSector; i < SECTOR_ROW * (numberOfSector + 1); i++)
+                for (int j = 0; j < 16; j++) fatSector[i][j] = sectors[i - SECTOR_ROW * numberOfSector][j];
         }
         
         numberOfSector++;
@@ -160,17 +161,24 @@ int main(int argc, char** argv)
     bootSector->toString();
 
     IValueMapper* mapper = new BootSectorMapper;
-    map<string, int> mp = mapper->mapper(bootSector);
-    cout << mp["Sc"] << endl;
-    cout << mp["Sb"] << endl;
-    cout << mp["Nf"] << endl;
-    cout << mp["Sv"] << endl;
-    cout << mp["Sf"] << endl;
-    cout << mp["ClusterBeginRDET"] << endl;
+    map<string, int> mpbootSector = mapper->mapper(bootSector);
+    cout << mpbootSector["Sc"] << endl;
+    cout << mpbootSector["Sb"] << endl;
+    cout << mpbootSector["Nf"] << endl;
+    cout << mpbootSector["Sv"] << endl;
+    cout << mpbootSector["Sf"] << endl;
+    cout << mpbootSector["ClusterBeginRDET"] << endl;
 
     FatTable* fatTable = getFatTable();
     cout << endl;
     fatTable->toString();
+
+    delete mapper;
+    mapper = new FatTableMapper;
+    map<string, int> mpFatTable = mapper->mapper(fatTable);
+    cout << endl << endl;
+    for (int i = 0; i < 32 * 4 * 5; i++)
+        cout << i << ' ' << mpFatTable[Utils::String::convertIntToString(i)] << endl;
 
     return 0;
 }
