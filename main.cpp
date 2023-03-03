@@ -1,30 +1,53 @@
 #include <windows.h>
-using namespace std;
-#include<iostream>
+#include <iostream>
 #include <stdio.h>
-#include<sstream>
-#include<string>
+#include <sstream>
+#include <string>
+#include <iomanip>
 
-unsigned ConvertByteToString(BYTE tempBuf)
+#include "BootSector.h"
+#include "IValueMapper.h"
+#include "BootSectorMapper.h"
+#include "Utils.h"
+#include "FatTable.h"
+
+using namespace std;
+
+#define EOF 0x0fffffff
+#define SUB_ENTRY 0x0f
+#define SECTOR_ROW 32
+#define SECTOR_COLUMN 16
+
+string ConvertByteToString(BYTE tempBuf)
 {
     std::stringstream ss;
 
     int it = int(tempBuf);
-    ss << std::hex << it;
+    ss << std::hex << setw(2) << setfill('0') << it;
 
-    unsigned result;
-    ss >> result;
-
+    string result;
+    result = ss.str();
     return result;
 }
 
-int ReadSector(LPCWSTR  drive, int readPoint, BYTE sector[512])
+bool isZeroLastByte(string** sectors) {
+    stringstream buffer;
+    for (int i = SECTOR_COLUMN-1; i >= SECTOR_COLUMN - 4; i--) 
+        buffer << sectors[SECTOR_ROW - 1][i];
+    string lastByte = buffer.str();
+    
+    return lastByte == "00000000" ? true : false;
+}
+
+
+string** ReadSector(LPCWSTR drive, int readPoint, BYTE sector[512])
 {
     int retCode = 0;
     DWORD bytesRead;
     HANDLE device = NULL;
 
-    device = CreateFile(drive,    // Drive to open
+    device = CreateFile(
+        drive,    // Drive to open
         GENERIC_READ,           // Access mode
         FILE_SHARE_READ | FILE_SHARE_WRITE,        // Share Mode
         NULL,                   // Security Descriptor
@@ -35,45 +58,119 @@ int ReadSector(LPCWSTR  drive, int readPoint, BYTE sector[512])
     if (device == INVALID_HANDLE_VALUE) // Open Error
     {
         printf("CreateFile: %u\n", GetLastError());
-        system("pause");
-        return 1;
+        return NULL;
     }
 
-    SetFilePointer(device, readPoint, NULL, FILE_BEGIN);//Set a Point to Read
+    SetFilePointer(device, readPoint, NULL, FILE_CURRENT);//Set a Point to Read
 
     if (!ReadFile(device, sector, 512, &bytesRead, NULL))
     {
         printf("ReadFile: %u\n", GetLastError());
+        return NULL;
     }
     else
     {
         printf("Success!\n");
+        //push sector to array 32*16 = 512 byte;
+        string** sectors = new string * [SECTOR_ROW];
+        for (int i = 0; i < SECTOR_ROW; i++)
+            sectors[i] = new string[SECTOR_COLUMN];
+        int sectorsRow = 0;
+        int sectorsColumn = 0;
         for (int i = 0; i < 512; i++)
         {
-
-            // create a row after every 16 
-            // columns so that display 
-            // looks good 
-            if (0 == i % 16)
+            //new row after enough 16 column
+            if (0 == i % 16 && i != 0)
             {
-                printf("\n");
+                sectorsRow++;
+                sectorsColumn = 0;
             }
 
             BYTE b = sector[i];
-            //  string rs = ConvertByteToString(b);
-            //  cout << rs << " ";
-              //printf("d ", isascii(b) ? int(b) : '1');
-            cout << std::hex << ConvertByteToString(b) << " ";
-
+            sectors[sectorsRow][sectorsColumn] = ConvertByteToString(b);
+            sectorsColumn++;
         }
-        system("pause");
-    }
-}
-int main(int argc, char** argv)
-{
 
+        CloseHandle(device);
+        return sectors;
+    }
+
+    return NULL;
+}
+
+BootSector* getBootSector() {
     BYTE sector[512];
-    ReadSector(L"\\\\.\\F:", 0, sector);
-    system("pause");
+    string** sectors = ReadSector(L"\\\\.\\G:", 0, sector);
+    BootSector* bootSector = new BootSector(sectors);
+
+    return bootSector;
+}
+
+FatTable* getFatTable() {
+    BootSector* bootSector = getBootSector();
+    IValueMapper* mapper = new BootSectorMapper;
+
+    map<string, int> bootSectorMapper = mapper->mapper(bootSector);
+
+    string** fatSector = NULL;
+    int numberOfSector = 0;
+    while (true) {
+        BYTE sector[512];
+        int readPoint = (bootSectorMapper["Sb"] + numberOfSector) * 512;
+        string** sectors = ReadSector(L"\\\\.\\G:", readPoint, sector);
+        
+        //if table doesn't exiting -> create new table contain 1 sector;
+        if (numberOfSector == 0) {
+            fatSector = new string * [SECTOR_ROW];
+            for (int i = 0; i < SECTOR_ROW; i++)
+                fatSector[i] = new string[SECTOR_COLUMN];
+            fatSector = sectors;
+        }
+        else {
+            //fat table large than 1 sector
+            //deep copy
+            string** newFatSector = new string * [SECTOR_ROW * (numberOfSector + 1)];
+            for (int i = 0; i < SECTOR_ROW * (numberOfSector + 1); i++)
+                newFatSector[i] = new string[SECTOR_COLUMN];
+            for (int i = 0; i < SECTOR_ROW * numberOfSector; i++)
+                for (int j = 0; j < SECTOR_COLUMN; j++)
+                    newFatSector[i][j] = fatSector[i][j];
+
+            //swap pointer between 2 fat table and delete old fat table;
+            string** temp = newFatSector;
+            newFatSector = fatSector;
+            fatSector = temp;
+
+            for (int i = 0; i < SECTOR_ROW * numberOfSector; i++)
+                delete[] newFatSector[i];
+            delete[] newFatSector;
+        }
+        
+        numberOfSector++;
+        if (isZeroLastByte(sectors) == true) break;
+    }
+
+    FatTable* fatTable = new FatTable(numberOfSector, fatSector);
+    return fatTable;
+}
+
+int main(int argc, char** argv)
+{   
+    BootSector* bootSector = getBootSector();
+    bootSector->toString();
+
+    IValueMapper* mapper = new BootSectorMapper;
+    map<string, int> mp = mapper->mapper(bootSector);
+    cout << mp["Sc"] << endl;
+    cout << mp["Sb"] << endl;
+    cout << mp["Nf"] << endl;
+    cout << mp["Sv"] << endl;
+    cout << mp["Sf"] << endl;
+    cout << mp["ClusterBeginRDET"] << endl;
+
+    FatTable* fatTable = getFatTable();
+    cout << endl;
+    fatTable->toString();
+
     return 0;
 }
