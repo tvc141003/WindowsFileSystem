@@ -41,5 +41,18 @@ namespace Utils {
 			string str = buffer.str();
 			return str;
 		}
+
+		static string convertHexToString(string hex) {
+			int len = hex.length();
+			string newString = "";
+			for (int i = 0; i < len; i += 2)
+			{
+				string byte = hex.substr(i, 2);
+				char chr = (char)(int)strtol(byte.c_str(), NULL, 16);
+				newString.push_back(chr);
+			}
+
+			return newString;
+		}
 	};
 }

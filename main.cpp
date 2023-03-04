@@ -11,6 +11,11 @@
 #include "FatTableMapper.h"
 #include "Utils.h"
 #include "FatTable.h"
+#include "RootDirectoryTable.h"
+#include "DirectoryTable.h"
+#include "Entry.h"
+#include "MainEntry.h"
+#include "SubEntry.h"
 
 using namespace std;
 
@@ -26,13 +31,26 @@ string ConvertByteToString(BYTE tempBuf)
     return result;
 }
 
-bool isZeroLastByte(string** sectors) {
+bool isEndOfFatTable(string** sectors) {
     stringstream buffer;
     for (int i = SECTOR_COLUMN-1; i >= SECTOR_COLUMN - 4; i--) 
         buffer << sectors[SECTOR_ROW - 1][i];
     string lastByte = buffer.str();
     
     return lastByte == "00000000" ? true : false;
+}
+
+bool isEndOfDirectory(string** sector) {
+    stringstream buffer;
+    for (int i = SECTOR_ROW - 1; i >= SECTOR_ROW - 2; i--)
+        for (int j = SECTOR_COLUMN - 1; j >= 0; j--)
+            buffer << sector[i][j];
+    string lastEntry = buffer.str();
+
+    for (int i = 0; i < lastEntry.length(); i++)
+        if (lastEntry[i] != '0') return false;
+
+    return true;
 }
 
 
@@ -111,7 +129,6 @@ FatTable* getFatTable() {
     string** fatSector = NULL;
     int numberOfSector = 0;
     while (true) {
-        cout << 1 << endl;
         BYTE sector[512];
         int readPoint = (bootSectorMapper["Sb"] + numberOfSector) * 512;
         string** sectors = ReadSector(L"\\\\.\\G:", readPoint, sector);
@@ -148,16 +165,126 @@ FatTable* getFatTable() {
         }
         
         numberOfSector++;
-        if (isZeroLastByte(sectors) == true) break;
+        if (isEndOfFatTable (sectors) == true) break;
     }
 
     FatTable* fatTable = new FatTable(numberOfSector, fatSector);
     return fatTable;
 }
 
+DirectoryTable* readDirectoryTable() {
+    BootSector* bootSector = getBootSector();
+    IValueMapper* mapper = new BootSectorMapper;
+
+    map<string, int> bootSectorMapper = mapper->mapper(bootSector);
+
+    string** directory = NULL;
+    int numberOfSector = 0;
+    while (true) {
+        BYTE sector[512];
+        int readPoint = (bootSectorMapper["Sb"] + numberOfSector + bootSectorMapper["Nf"] * bootSectorMapper["Sf"]) * 512;
+        string** sectors = ReadSector(L"\\\\.\\G:", readPoint, sector);
+
+        //if table doesn't exiting -> create new table contain 1 sector;
+        if (numberOfSector == 0) {
+            directory = new string * [SECTOR_ROW];
+            for (int i = 0; i < SECTOR_ROW; i++)
+                directory[i] = new string[SECTOR_COLUMN];
+            directory = sectors;
+        }
+        else {
+            //directory table large than 1 sector
+            //deep copy
+            string** newDirectory = new string * [SECTOR_ROW * (numberOfSector + 1)];
+            for (int i = 0; i < SECTOR_ROW * (numberOfSector + 1); i++)
+                newDirectory[i] = new string[SECTOR_COLUMN];
+            for (int i = 0; i < SECTOR_ROW * numberOfSector; i++)
+                for (int j = 0; j < SECTOR_COLUMN; j++)
+                    newDirectory[i][j] = directory[i][j];
+
+            //swap pointer between 2 directory table and delete old directory table;
+            string** temp = newDirectory;
+            newDirectory = directory;
+            directory = temp;
+
+            for (int i = 0; i < SECTOR_ROW * numberOfSector; i++)
+                delete[] newDirectory[i];
+            delete[] newDirectory;
+
+            //insert value into new directory table
+            for (int i = SECTOR_ROW * numberOfSector; i < SECTOR_ROW * (numberOfSector + 1); i++)
+                for (int j = 0; j < 16; j++) directory[i][j] = sectors[i - SECTOR_ROW * numberOfSector][j];
+        }
+
+        numberOfSector++;
+        if (isEndOfDirectory(sectors) == true) break;
+    }
+    cout << endl;
+    for (int i = 0; i < SECTOR_ROW * numberOfSector; i++) {
+        for (int j = 0; j < SECTOR_COLUMN; j++) cout << directory[i][j] << " ";
+        cout << endl;
+    }
+    //add Entry
+
+    RootDirectoryTable* directoryTable = new RootDirectoryTable;
+    int indexEntry = 0;
+    while (indexEntry < numberOfSector * SECTOR_ROW) {
+        //get entry = 2 row in directory table
+        string entryTable[2][SECTOR_COLUMN];
+        for(int i = 0; i<2; i++)
+            for (int j = 0; j < SECTOR_COLUMN; j++) {
+                entryTable[i][j] = directory[indexEntry + i][j];
+            }
+
+        if (Utils::Int::convertHexToDecimal(entryTable[0][11]) == SUB_ENTRY) {
+            //sub entry
+            int identify = Utils::Int::convertHexToDecimal(entryTable[0][0]);
+            string name = "";
+            stringstream buffer;
+            string hexString = "";
+            //5 char unicode
+            for (int i = 1; i <= 10; i += 2) {
+                buffer << entryTable[0][i];
+            }
+            hexString = hexString + buffer.str();
+            buffer.str("");
+
+            //2 char offset E -> F
+            for (int i = 14; i <= 15; i++)
+                buffer << entryTable[0][i];
+            hexString = hexString + buffer.str();
+            buffer.str("");
+
+            //10 char offset 10->19
+            for (int i = 0; i <= 9; i++)
+                buffer << entryTable[1][i];
+            hexString = hexString + buffer.str();
+            buffer.str("");
+
+            //last 5 char from offset 1C -> 1F
+            for (int i = 12; i <= 15; i++)
+                buffer << entryTable[1][i];
+            hexString = hexString + buffer.str();
+            buffer.str("");
+
+            name = Utils::String::convertHexToString(hexString);
+
+            Entry* entry = new SubEntry(identify, name);
+            directoryTable->entrys().push_back(entry);
+        }
+        else {
+
+        }
+
+        indexEntry = indexEntry + 2;
+    }
+
+    return directoryTable;
+}
+
 int main(int argc, char** argv)
 {   
-    BootSector* bootSector = getBootSector();
+    /*BootSector* bootSector = getBootSector();
     bootSector->toString();
 
     IValueMapper* mapper = new BootSectorMapper;
@@ -178,7 +305,9 @@ int main(int argc, char** argv)
     map<string, int> mpFatTable = mapper->mapper(fatTable);
     cout << endl << endl;
     for (int i = 0; i < 32 * 4 * 5; i++)
-        cout << i << ' ' << mpFatTable[Utils::String::convertIntToString(i)] << endl;
+        cout << i << ' ' << mpFatTable[Utils::String::convertIntToString(i)] << endl;*/
 
+    DirectoryTable* directory = readDirectoryTable();
+    directory->child();
     return 0;
 }
