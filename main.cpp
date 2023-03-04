@@ -4,7 +4,8 @@ using namespace std;
 #include <stdio.h>
 #include<sstream>
 #include<string>
-
+#include<map> 
+#include <iomanip>
 unsigned ConvertByteToString(BYTE tempBuf)
 {
     std::stringstream ss;
@@ -63,7 +64,7 @@ int ReadSector(LPCWSTR  drive, int readPoint, BYTE sector[512])
             //  string rs = ConvertByteToString(b);
             //  cout << rs << " ";
               //printf("d ", isascii(b) ? int(b) : '1');
-            cout << std::hex << ConvertByteToString(b) << " ";
+            cout << std::hex << setw(2) << setfill('0') << ConvertByteToString(b) << " ";
 
         }
         system("pause");
@@ -71,9 +72,10 @@ int ReadSector(LPCWSTR  drive, int readPoint, BYTE sector[512])
 }
 int main(int argc, char** argv)
 {
-
+  
     BYTE sector[512];
-    ReadSector(L"\\\\.\\F:", 0, sector);
+    ReadSector(L"\\\\.\\E:",3224*512, sector);
     system("pause");
     return 0;
+   
 }
