@@ -56,4 +56,4 @@ map<string, int> BootSectorMapper::mapper(Object* origin) {
 	buffer.str("");
 
 	return mp;
-}
+}	

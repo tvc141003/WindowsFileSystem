@@ -6,4 +6,5 @@ public:
 	string toString() = 0;
 	virtual void child() = 0;
 	virtual string type() = 0;
+	
 };

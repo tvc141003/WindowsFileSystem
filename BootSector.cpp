@@ -16,7 +16,8 @@ BootSector::~BootSector() {
 
 string BootSector::toString() {
 	for (int i = 0; i < 32; i++) {
-		for (int j = 0; j < 16; j++) cout << this->_sector[i][j] << ' ';
+		for (int j = 0; j < 16; j++)
+			cout << this->_sector[i][j] << ' ';
 		cout << endl;
 	}
 	return "BootSector";

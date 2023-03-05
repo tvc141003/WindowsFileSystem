@@ -69,5 +69,14 @@ string MainEntry::type() {
 /// </summary>
 /// <returns></returns>
 string MainEntry::info() {
-	return "";
+	stringstream buffer;
+	buffer << " Main entry" << endl;
+	buffer << "Head Name: " << this->_headName << endl;
+	buffer << "Tail Name: " << this->_tailName << endl;
+	buffer << "status: " << this->_status << endl;
+	buffer << "Start cluster " << this->_startCluster << endl;
+	buffer << "Size: " << this->_size << endl;
+	buffer << "---------------" << endl;
+
+	return buffer.str();
 }

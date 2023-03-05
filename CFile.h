@@ -1,15 +1,13 @@
 #pragma once
-#include "CItem.h"
-
-class CFile : public CItem {
-public:
-	CFile();
-	CFile(string, string);
-
+#include"CItem.h"
+class CFile : public CItem
+{
 public:
 	string toString();
-
-protected:
-	string name;
-	string prePath;
+	CFile();
+	int startCluster();
+	CFile(string , int s);
+	string name(); 
+	void setName(string);
+	void setStartCluster(int);
 };

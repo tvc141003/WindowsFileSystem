@@ -1,13 +1,35 @@
-#include "CFile.h"
+#include"CFile.h"
 
-CFile::CFile() : CItem() {
-	//do nothing
+CFile::CFile()
+{
+
+}
+CFile::CFile(string name, int startCluster)
+{
+	this->_name = name;
+	this->_startCluster = startCluster;
+
+}
+string CFile::toString()
+{
+	return "";
 }
 
-CFile::CFile(string name, string prePath) : CItem(name, prePath) {
-	//Do nothing
-}
+int CFile::startCluster()
+{
+	return this->_startCluster;
 
-string CFile::toString() {
-	return "CFile";
+}
+string CFile::name()
+{
+	return this->_name;
+
+}
+void CFile::setName(string name)
+{
+	this->_name = name;
+}
+void CFile::setStartCluster(int cluster)
+{
+	this->_startCluster = cluster;
 }
