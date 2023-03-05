@@ -27,8 +27,8 @@ string RootDirectoryTable::toString() {
 /// Code after done Entry
 /// </summary>
 void RootDirectoryTable::child() {
-	for (auto entry : this->_entrys) {
-		cout << entry->info();
+	for (int i = 0; i < this->entrys().size(); i++) {
+		cout << this->entrys()[i]->info();
 	}
 }
 

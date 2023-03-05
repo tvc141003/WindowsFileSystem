@@ -15,7 +15,7 @@ public:
 
 	void setFatTable(string**&);
 	void setNumberOfSector(int);
-
+	static bool isEndOfFatTable(string** sectors);
 public:
 	string toString();
 

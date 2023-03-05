@@ -1,0 +1,23 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(534,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (WindowsAccessDataHardDisk.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  CFolder.cpp
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(15,1): warning C4005: 'EOF': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdio.h(41): message : see previous definition of 'EOF'
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(32,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(50,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  ReadDirectoryTable.cpp
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(15,1): warning C4005: 'EOF': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdio.h(41): message : see previous definition of 'EOF'
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(32,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(50,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  ReadFatTable.cpp
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(15,1): warning C4005: 'EOF': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdio.h(41): message : see previous definition of 'EOF'
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(32,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(50,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  main.cpp
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(15,1): warning C4005: 'EOF': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\stdio.h(41): message : see previous definition of 'EOF'
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(32,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\WindowAccessDataHardDisk\Utils.h(50,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+  WindowAccessDataHardDisk.vcxproj -> D:\HeDieuHanh\WindowsAccessDataHardDisk\WindowAccessDataHardDisk\x64\Debug\WindowAccessDataHardDisk.exe

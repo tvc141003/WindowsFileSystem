@@ -5,11 +5,9 @@ string CItem::toString() {
 }
 
 CItem::CItem() {
-	name = "\\\\";
-	prePath = "";
+
 }
 
 CItem::CItem(string prePath, string name) {
-	this->prePath = prePath;
-	this->name = name;
+	
 }

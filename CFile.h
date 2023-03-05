@@ -1,10 +1,14 @@
 #pragma once
-#include "DataStruct.h"
-
-class CFile : public DataStruct {
+#include"CItem.h"
+class CFile : public CItem
+{
 public:
 	string toString();
+	CFile();
+	int startCluster();
+	CFile(string , int s);
+	string name(); 
+	void setName(string);
+	void setStartCluster(int);
 
-protected:
-	string path;
 };

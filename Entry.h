@@ -1,5 +1,6 @@
 #pragma once
 #include <sstream>
+#include<iostream>
 using std::stringstream, std::endl;
 #include "Object.h"
 

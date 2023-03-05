@@ -1,7 +1,7 @@
 #include "FatTable.h"
 #include <iostream>
 using std::cout, std::endl;
-
+#include "Utils.h"
 FatTable::FatTable() {
 	this->_numberOfSector = 0;
 	this->_fatTable = NULL;
@@ -44,4 +44,13 @@ void FatTable::setNumberOfSector(int numberOfSector) {
 
 void FatTable::setFatTable(string**& fatTable) {
 	this->_fatTable = fatTable;
+}
+ bool FatTable::isEndOfFatTable(string** sectors)
+{
+	 stringstream buffer;
+	 for (int i = SECTOR_COLUMN - 1; i >= SECTOR_COLUMN - 4; i--)
+		 buffer << sectors[SECTOR_ROW - 1][i];
+	 string lastByte = buffer.str();
+
+	 return lastByte == "00000000" ? true : false;
 }

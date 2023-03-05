@@ -36,9 +36,10 @@ string SubEntry::type() {
 
 string SubEntry::info() {
 	stringstream buffer;
+	buffer << " sub entry" << endl;
 	buffer << this->_identify << " ";
 	buffer << this->_name << endl;
-
+	buffer << "------------" << endl;
 	string result = buffer.str();
 
 	return result;
