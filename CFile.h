@@ -1,10 +1,15 @@
 #pragma once
-#include "DataStruct.h"
+#include "CItem.h"
 
-class CFile : public DataStruct {
+class CFile : public CItem {
+public:
+	CFile();
+	CFile(string, string);
+
 public:
 	string toString();
 
 protected:
-	string path;
+	string name;
+	string prePath;
 };

@@ -12,5 +12,4 @@ public:
 protected:
 	string name;
 	string prePath;
-
 };

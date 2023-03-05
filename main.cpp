@@ -273,7 +273,7 @@ DirectoryTable* readDirectoryTable() {
             directoryTable->entrys().push_back(entry);
         }
         else {
-
+            //main entry
         }
 
         indexEntry = indexEntry + 2;
@@ -306,7 +306,6 @@ int main(int argc, char** argv)
     cout << endl << endl;
     for (int i = 0; i < 32 * 4 * 5; i++)
         cout << i << ' ' << mpFatTable[Utils::String::convertIntToString(i)] << endl;*/
-
     DirectoryTable* directory = readDirectoryTable();
     directory->child();
     return 0;
