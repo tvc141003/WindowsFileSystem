@@ -63,9 +63,10 @@ inline string** ReadSector(LPCWSTR drive, int readPoint, BYTE sector[512])
 
     return NULL;
 }
+
 inline BootSector* getBootSector() {
     BYTE sector[512];
-    string** sectors = ReadSector(L"\\\\.\\E:", 0, sector);
+    string** sectors = ReadSector(HARD_DISK, 0, sector);
     BootSector* bootSector = new BootSector(sectors);
     return bootSector;
 }

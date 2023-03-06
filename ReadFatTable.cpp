@@ -22,7 +22,7 @@ Object* ReadFatTable::Read(int point)
     while (true) {
         BYTE sector[512];
         int readPoint = (bootSectorMapper["Sb"] + numberOfSector) * 512;
-        string** sectors = ReadSector(L"\\\\.\\E:", readPoint, sector);
+        string** sectors = ReadSector(HARD_DISK, readPoint, sector);
 
         //if table doesn't exiting -> create new table contain 1 sector;
         if (numberOfSector == 0) {

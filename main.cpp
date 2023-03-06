@@ -4,32 +4,70 @@
 #include "BootSector.h"
 #include "FatTable.h" 
 #include "CFolder.h"
-#include"Conio.h"
+#include "Conio.h"
+#include "CFile.h"
 using std::string, std::cin;
-void program(CItem* item,CItem* preFolder)
-{
-    
-    item->show();
-    char key;
-    key = _getch();
-    if (key == ESC)
-    {
-        system("cls");
-        return;
 
-        //program(preFolder, preFolder->preItem());
-    }
-    cout << " -------------- " << endl;
-    if (item->type() == "CFolder")
-    {
-        string i;
-        cout << "Input i =  ";
-        getline(cin, i);
+void program(CItem* item)
+{
+    if (item->type() == "CFolder") {
         CFolder* folder = dynamic_cast<CFolder*>(item);
-        system("cls");
-        program(folder->Item()[stoi(i)],item); 
+        int index = 2;
+        while (true) {
+            system("cls");
+            folder->show(index);
+            unsigned char key = _getch();
+            if (int(key) == ARROW) {
+                unsigned char arrow = _getch();
+                switch (arrow) {
+                case static_cast<int>(UP): {
+                    int newSelect = max(index - 1, 2);
+                    index = newSelect;
+                    break;
+                }
+
+                case static_cast<int>(DOWN): {
+                    int newSelect = min(index + 1, folder->Item().size()-1);
+                    index = newSelect;
+                    break;
+                }
+                }
+            }
+            else {
+                switch (key) {
+                case static_cast<int>(ENTER):
+                    if (folder->Item()[index]->type() == "CFile") {
+                        CItem* file = folder->Item()[index];
+                        program(file);
+                    }
+                    else {
+                        CFolder* subFolder = dynamic_cast<CFolder*>(folder->Item()[index]);
+                        subFolder->init();
+                        program(subFolder);
+                    }
+                    break;
+
+                case static_cast<int>(ESC):
+                    return;
+                }
+            }
+        }
     }
-   
+    else { 
+        CFile* file = dynamic_cast<CFile*>(item);
+        while (true) {
+            system("cls");
+            file->show(2);
+            unsigned char key = _getch();
+
+            switch (key) {
+            case static_cast<int>(ESC):
+                return;
+            }
+            
+        }
+    }
+  
 }
 int main(int argc, char** argv)
 {
@@ -43,10 +81,15 @@ int main(int argc, char** argv)
     DirectoryTable* directory = dynamic_cast<DirectoryTable*> (reader->Read(point));
   //  directory->child();
 
-    CFolder* folder = new CFolder(dynamic_cast<RootDirectoryTable*> (directory),1,NULL); // Disk
-    folder->setName("Disk");
+    RootDirectoryTable* RDET = dynamic_cast<RootDirectoryTable*> (directory);
+
+    MainEntry* mainEntry = dynamic_cast<MainEntry*>(RDET->entrys()[0]);
+    int startCluster = bootSectorMapper["ClusterBeginRDET"];
+    string name = mainEntry->headName();
+    CFolder* folder = new CFolder(name, startCluster); // Disk
+    folder->init();
     //cout << folder->name();
-    program(folder,folder->preItem());
+    program(folder);
 
     return 0;
 }

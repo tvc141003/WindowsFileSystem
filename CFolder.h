@@ -1,26 +1,36 @@
 
 #pragma once
+#include <vector>
 #include "DataStruct.h"
-#include<vector>
-#include"CItem.h" 
-#include"RootDirectoryTable.h"
+#include "CItem.h" 
+#include "RootDirectoryTable.h"
+#include "ConsoleColor.h"
+#include "Colors.h"
+#include "ConsoleModify.h"
+#include "ConsoleModifySetColor.h"
 
 
 class CFolder : public CItem {
 public:
-	string toString();
-	RootDirectoryTable _RDET;
 	CFolder();
+	CFolder(string, int);
+
+	~CFolder();
+
+public:
+	string toString();
 	//CFolder(RootDirectoryTable*);
-	CFolder(RootDirectoryTable*, bool ,CItem* );
-	vector<CItem* > Item();
+	vector<CItem*> Item();
 	int startCluster();
 	string name();
 	void setName(string );
 	void setStartCluster(int );
-	void show(); 
+	void show(int); 
 	string type();
+	string info();
+public:
+	void init();
+
 protected:
 	vector<CItem* > _item;
-
 };

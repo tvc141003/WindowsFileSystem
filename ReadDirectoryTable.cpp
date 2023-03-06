@@ -25,7 +25,7 @@ Object* ReadDirectoryTable::Read(int point)
     while (true) {
         BYTE sector[512];
         int readPoint = (numberOfSector + point) * 512;
-        string** sectors = ReadSector(L"\\\\.\\E:", readPoint, sector);
+        string** sectors = ReadSector(HARD_DISK, readPoint, sector);
 
         //if table doesn't exiting -> create new table contain 1 sector;
         if (numberOfSector == 0) {
@@ -78,7 +78,7 @@ Object* ReadDirectoryTable::Read(int point)
                 entryTable[i][j] = directory[indexEntry + i][j];
             }
 
-        if (Utils::Int::convertHexToDecimal(entryTable[0][11]) == SUB_ENTRY && entryTable[0][0] != DELETED_ENTRY) {
+        if (Utils::Int::convertHexToDecimal(entryTable[0][11]) == SUB_ENTRY && Utils::Int::convertHexToDecimal(entryTable[0][0]) != DELETED_ENTRY) {
             //sub entry
             int identify = Utils::Int::convertHexToDecimal(entryTable[0][0]);
             string name = "";
@@ -115,7 +115,7 @@ Object* ReadDirectoryTable::Read(int point)
             directoryTable->entrys().push_back(entry);
         }
         else {
-            if (entryTable[0][0] != "00" && entryTable[0][0]!= DELETED_ENTRY) {
+            if (Utils::Int::convertHexToDecimal(entryTable[0][0]) != EMPTY_ENTRY && Utils::Int::convertHexToDecimal(entryTable[0][0]) != DELETED_ENTRY) {
                 // main entry
                 string hexString = "";
 
@@ -124,6 +124,7 @@ Object* ReadDirectoryTable::Read(int point)
                 // read head name
                 for (int i = 0; i <= 7; i++)
                 {
+                    if (Utils::Int::convertHexToDecimal(entryTable[0][i]) == EMPTY_BYTE) continue;
                     buffer << entryTable[0][i];
                 }
                 hexString = buffer.str();
@@ -155,7 +156,7 @@ Object* ReadDirectoryTable::Read(int point)
                 }
                 //Size ;
                 buffer.str("");
-                long size = 0;
+                long long size = 0;
 
                 for (int i = 15; i >= 12; i--)
                 {
@@ -163,7 +164,7 @@ Object* ReadDirectoryTable::Read(int point)
 
                 }
 
-                size = Utils::Int::convertHexToDecimal(buffer.str());
+                size = Utils::LongLong::convertHexToDecimal(buffer.str());
                 Entry* entry = new MainEntry(Headname, Tailname, Status, startCluster, size);
                 // entry->info();
                 buffer.str("");
