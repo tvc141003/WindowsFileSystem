@@ -175,11 +175,37 @@ void CFolder::show(int index)
 }
 
 string CFolder::info() {
+	vector <int> sectors = {};
+	int cluster = this->_startCluster;
+	BootSector* bootSector = getBootSector();
+	IValueMapper* mapper = new BootSectorMapper;
+	map<string, int> bootSectorMapper = mapper->mapper(bootSector);
+	delete mapper;
+
+	ReadFatTable* reader = new ReadFatTable;
+	FatTable* fatTable = dynamic_cast<FatTable*>(reader->Read(0));
+	mapper = new FatTableMapper;
+	map<string, int> fatMapper = mapper->mapper(fatTable);
+	delete mapper;
+
+	string indexCluster = Utils::String::convertIntToString(this->_startCluster);
+	do {
+		int startSector = (bootSectorMapper["Sb"] + bootSectorMapper["Nf"] * bootSectorMapper["Sf"] + (stoi(indexCluster) - 2) * bootSectorMapper["Sc"]);
+
+		for (int i = 0; i < bootSectorMapper["Sc"]; i++) {
+			sectors.push_back(startSector + i);
+		}
+
+		if (fatMapper[indexCluster] != EOF) indexCluster = Utils::String::convertIntToString(fatMapper[indexCluster]);
+	} while (stoi(indexCluster) < 2 && fatMapper[indexCluster] != EOF);
+
 	stringstream builder;
 
 	builder << "Name: " << this->_name << endl;
 	builder << "Start Cluster: " << this->_startCluster << endl;
-
+	builder << "Sectors: ";
+	for (auto sector : sectors) builder << sector << " ";
+	builder << endl;
 	string result = builder.str();
 	return result;
 }
