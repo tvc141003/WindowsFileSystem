@@ -17,6 +17,7 @@ using std::setfill;
 #define SECTOR_ROW 32
 #define SECTOR_COLUMN 16
 #define DELETED_ENTRY "e5"
+
 namespace Utils {
 	class Int {
 	public:
