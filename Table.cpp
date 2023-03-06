@@ -7,8 +7,9 @@ string Table::toString()
 }
 
 Table::Table() {
-	
-};
+	this->table = NULL;
+}
+
 Table::Table(int**& pointer)
 {
 	this->table = pointer;
