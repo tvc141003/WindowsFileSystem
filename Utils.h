@@ -11,7 +11,7 @@ using std::map;
 using std::string;
 using std::setw;
 using std::setfill;
-
+#define ESC 27
 #define EOF 0x0fffffff
 #define SUB_ENTRY 0x0f
 #define SECTOR_ROW 32
