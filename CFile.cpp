@@ -54,8 +54,17 @@ void CFile::setStartCluster(int cluster)
 void CFile::show(int index)
 {
 	cout << this->info()<<endl;
-	cout << "===========================" << endl;
+	cout << "==============================================================" << endl;
+	vector <string> names = Utils::String::split(this->_name, ".");
+	string tailName = "";
+	for (int i = 0; i < names[names.size() - 1].length(); i++)
+		if (int(names[names.size() - 1][i]) != 0) tailName = tailName + names[names.size() - 1][i];
+	if (tailName != "txt") {
 
+		
+		cout << "SYSTEM: DON'T SUPPORT FORMAT " << names[names.size()-1];
+		return;
+	}
 	int cluster = this->_startCluster;
 	BootSector* bootSector = getBootSector();
 	IValueMapper* mapper = new BootSectorMapper;
@@ -108,9 +117,11 @@ void CFile::show(int index)
 			else
 			{
 				for (int i = 0; i < 512; i++) {
-					if (size < this->size()) cout << sector[i]; else break;
+					if (size < this->size()) {
+						cout << sector[i];
+					}
 					size++;
-				} 
+				}
 			}
 		}
 		if (fatMapper[indexCluster] != EOF) indexCluster = Utils::String::convertIntToString(fatMapper[indexCluster]);

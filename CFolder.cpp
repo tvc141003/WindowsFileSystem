@@ -68,6 +68,7 @@ void CFolder::init() {
 				string tail = Utils::String::toLower(EntryTemp->tailName());
 				name = name + '.' + tail;
 			}
+			name = Utils::String::splice(name);
 			
 			int startCluster = EntryTemp->startCluster();
 			int size = EntryTemp->size();
@@ -97,6 +98,7 @@ void CFolder::init() {
 			name = builder.str();
 			if (!isSubEntry)
 				name = name + EntryTemp->tailName();
+			name = Utils::String::splice(name);
 
 			int startCluster = EntryTemp->startCluster();
 			//	cout << "Start cluster " << name << " = " << startCluster << endl;

@@ -11,6 +11,8 @@
 #include <iostream>
 #include <sstream>
 #include <Windows.h>
+#include <io.h>
+#include <fcntl.h>
 
 using std::cout, std::stringstream;
 class CFile : public CItem

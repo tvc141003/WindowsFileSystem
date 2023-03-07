@@ -85,31 +85,39 @@ Object* ReadDirectoryTable::Read(int point)
             stringstream buffer;
             string hexString = "";
             //5 char unicode
-            for (int i = 1; i <= 10; i += 2) {
+            for (int i = 1; i <= 10; i++) {
+                if (Utils::Int::convertHexToDecimal(entryTable[0][i]) == EMPTY_BYTE) continue;
                 buffer << entryTable[0][i];
             }
             hexString = hexString + buffer.str();
             buffer.str("");
 
             //2 char offset E -> F
-            for (int i = 14; i <= 15; i++)
+            for (int i = 14; i <= 15; i++) {
+                if (Utils::Int::convertHexToDecimal(entryTable[0][i]) == EMPTY_BYTE) continue;
                 buffer << entryTable[0][i];
+            }
             hexString = hexString + buffer.str();
             buffer.str("");
 
             //10 char offset 10->19
-            for (int i = 0; i <= 9; i++)
+            for (int i = 0; i <= 9; i++) {
+                if (Utils::Int::convertHexToDecimal(entryTable[1][i]) == EMPTY_BYTE) continue;
                 buffer << entryTable[1][i];
+            }
             hexString = hexString + buffer.str();
             buffer.str("");
 
             //last 5 char from offset 1C -> 1F
-            for (int i = 12; i <= 15; i++)
+            for (int i = 12; i <= 15; i++) {
+                if (Utils::Int::convertHexToDecimal(entryTable[1][i]) == EMPTY_BYTE) continue;
                 buffer << entryTable[1][i];
+            }
             hexString = hexString + buffer.str();
             buffer.str("");
 
             name = Utils::String::convertHexToString(hexString);
+            name = Utils::String::splice(name);
 
             Entry* entry = new SubEntry(identify, name);
             directoryTable->entrys().push_back(entry);
@@ -133,6 +141,7 @@ Object* ReadDirectoryTable::Read(int point)
                 // tail name ;
                 for (int i = 8; i <= 10; i++)
                 {
+                    if (Utils::Int::convertHexToDecimal(entryTable[0][i]) == EMPTY_BYTE) continue;
                     buffer << entryTable[0][i];
                 }
                 hexString = buffer.str();
@@ -160,6 +169,7 @@ Object* ReadDirectoryTable::Read(int point)
 
                 for (int i = 15; i >= 12; i--)
                 {
+                    if (Utils::Int::convertHexToDecimal(entryTable[1][i]) == EMPTY_BYTE) continue;
                     buffer << entryTable[1][i];
 
                 }
