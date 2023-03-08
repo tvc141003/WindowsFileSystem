@@ -29,6 +29,8 @@ using std::setfill;
 #define ARROW 224
 #define UP 72
 #define DOWN 80
+#define MFT_ROW 64
+#define MFT_COLUMN 16
 
 namespace Utils {
 	class Int {
@@ -48,6 +50,32 @@ namespace Utils {
 			}
 
 			return decimal;
+		}
+
+		static vector<unsigned int> convertHightBit(long long origin) {
+			vector <unsigned int> result = {};
+
+			unsigned int lower = 0;
+			unsigned int higher = 0;
+			
+			//32 bit lower
+			for (int i = 0; i < 32; i++) {
+				//bit i of origin = 1
+				if (((long long(1) << i) & origin) != 0) {
+					lower = (lower | (1 << i));
+				}
+			}
+
+			//32 bit higher
+			for (int i = 32; i < 64; i++) {
+				//bit i of origin = 1
+				if (((long long(1) << i) & origin) != 0) {
+					higher = (higher | (1 << i));
+				}
+			}
+			result.push_back(lower);
+			result.push_back(higher);
+			return result;
 		}
 	};
 

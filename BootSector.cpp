@@ -30,3 +30,4 @@ string**& BootSector::sector() {
 void BootSector::setSector(string**& sector) {
 	this->_sector = sector;
 }
+
