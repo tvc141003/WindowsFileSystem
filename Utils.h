@@ -24,7 +24,7 @@ using std::setfill;
 #define EMPTY_ENTRY 0x00
 #define EMPTY_BYTE 0x20
 #define EOB 0xff
-#define HARD_DISK L"\\\\.\\G:"
+#define HARD_DISK L"\\\\.\\E:"
 #define ENTER 13
 #define ARROW 224
 #define UP 72
@@ -149,13 +149,7 @@ namespace Utils {
 			return result;
 		}
 
-		static std::wstring s2ws(const std::string& str)
-		{ 
-			int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-			std::wstring wstrTo(size_needed, 0);
-			MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-			return wstrTo;
-		}
+	
 
 	};
 }

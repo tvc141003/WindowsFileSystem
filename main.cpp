@@ -71,6 +71,7 @@ void program(CItem* item)
 }
 int main(int argc, char** argv)
 {
+   // cout << " 1";
     BootSector* bootSector = getBootSector();
     IValueMapper* mapper = new BootSectorMapper;
 

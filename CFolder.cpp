@@ -74,7 +74,6 @@ void CFolder::init() {
 			int size = EntryTemp->size();
 			CItem* file = new CFile(name, startCluster, size);
 			this->_item.push_back(file);
-
 		}
 		else
 		{
