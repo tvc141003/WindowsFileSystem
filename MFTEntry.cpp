@@ -4,32 +4,74 @@
 
 MFTEntry::MFTEntry()
 {
-	this->_entry = NULL;
+	this->_byteBeginAttribute = 0;
+	this->_byteOfEntry = 0;
+	this->_flag = 0;
+	this->_nextAttributeId = 0;
+	this->_attributes = {};
 }
-MFTEntry::MFTEntry(string**& entry)
+
+MFTEntry::MFTEntry(int byteBegin, int flag, int byteOfEntry, int nextId, vector<Attribute*>& attributes)
 {
-	this->_entry = entry;
+	this->_byteBeginAttribute = byteBegin;
+	this->_byteOfEntry = byteOfEntry;
+	this->_flag = flag;
+	this->_nextAttributeId = nextId;
+	this->_attributes = attributes;
 }
 
 
-string**& MFTEntry::getEntry()
-{
-	return this->_entry;
+int MFTEntry::byteBeginAttribute() {
+	return this->_byteBeginAttribute;
 }
 
-void MFTEntry::setEntry(string** & entry)
-{
-	this->_entry = entry;
+int MFTEntry::flag() {
+	return this->_flag;
+}
+
+int MFTEntry::byteOfEntry() {
+	return this->_byteOfEntry;
+}
+
+int MFTEntry::nextAttributeId() {
+	return this->_nextAttributeId;
+}
+
+vector<Attribute*>& MFTEntry::attributes() {
+	return this->_attributes;
+}
+
+void MFTEntry::setByteBeginAttribute(int byteBegin) {
+	this->_byteBeginAttribute = byteBegin;
+}
+
+void MFTEntry::setFlag(int flag) {
+	this->_flag = flag;
+}
+
+void MFTEntry::setByteOfEntry(int byteOfEntry) {
+	this->_byteOfEntry = byteOfEntry;
+}
+
+void MFTEntry::setNextAttributeId(int nextId) {
+	this->_nextAttributeId = nextId;
+}
+
+void MFTEntry::setAttributes(vector<Attribute*>& attributes) {
+	this->_attributes = attributes;
 }
 
 string MFTEntry::toString()
 {
 	stringstream builder;
-	for (int i = 0; i < MFT_ROW; i++)
-	{
-		for (int j = 0; j < MFT_COLUMN; j++)
-			builder << _entry[i][j]<<" ";
-		builder << endl;
+	builder << "byteBeginAttribute: " << this->_byteBeginAttribute << endl;
+	builder << "flag: " << this->_flag << endl;
+	builder << "byteOfEntry: " << this->_byteOfEntry << endl;
+	builder << "nextAttributeId: " << this->_nextAttributeId << endl;
+	for (auto attri : this->_attributes) {
+		builder << attri->toString() << endl;
 	}
-	return builder.str();
+
+	string result = builder.str();
+	return result;
 }

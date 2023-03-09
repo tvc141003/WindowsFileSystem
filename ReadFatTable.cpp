@@ -10,7 +10,7 @@ string ReadFatTable::toString()
 	return "";
 }
 
-Object* ReadFatTable::Read(int point)
+Object* ReadFatTable::Read(long long point)
 {
     BootSector* bootSector = getBootSector();
     IValueMapper* mapper = new BootSectorMapper;

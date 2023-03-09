@@ -6,9 +6,11 @@
 #include "CFolder.h"
 #include "Conio.h"
 #include "CFile.h"
-#include"BiosParameterBlock.h"
-#include"BiosParameterBlockMapper.h"
-#include"MFTEntry.h"
+#include "BiosParameterBlock.h"
+#include "BiosParameterBlockMapper.h"
+#include "MFTEntry.h"
+#include "ReadMFTEntry.h"
+
 using std::string, std::cin;
 
 void program(CItem* item)
@@ -100,6 +102,10 @@ int main(int argc, char** argv)
   //  return 0;
     BYTE sector[512];
     string** sectors = ReadSector(HARD_DISK, 0, sector);
+    /*for (int i = 0; i < 32; i++) {
+        for (int j = 0; j < 16; j++) cout << sectors[i][j] << " ";
+        cout << endl;
+    }*/
     BiosParameterBlock* BPB = new BiosParameterBlock(sectors);
     BiosParameterBlockMapper* mapper = new BiosParameterBlockMapper;
     map<string, int> mp =  mapper->mapper(BPB);
@@ -108,27 +114,14 @@ int main(int argc, char** argv)
         cout << i.first << " " << i.second<<endl;
     }*/
     long long start = mp["ClusterBeginMFT"] * mp["Sc"];
-    cout << start * 512 << endl;
-    start = (start * 512);
-   
-   // cout << start << " " << 1 << endl;
-    string** str = new string * [64];
-    for (int i = 0; i < 64; i++)
-    {
-        str[i] = new string[16];
-    }
+    
+    long long readpoint = start * 512;
+    Reader* reader = new ReadMFTEntry;
 
-    string** temp = ReadSectorBigByte(HARD_DISK, start, sector);
-    for (int i = 0; i < 32; i++)
-    {
-        str[i] = temp[i]; 
-    }
-    temp = ReadSectorBigByte(HARD_DISK, (start+512), sector);
-    for (int i = 0; i < 32; i++)
-    {
-        str[i+32] = temp[i];
-    }
-    MFTEntry* entry = new MFTEntry(str);
-    cout<<entry->toString();
+    Object* entry = dynamic_cast<MFTEntry*>(reader->Read(readpoint));
+    cout << entry->toString();
+
+    
+    
    // BPB->toString();
 }

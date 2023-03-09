@@ -6,6 +6,6 @@ class ReadFatTable : public Reader
 public:
 	string toString();
 	ReadFatTable();
-	Object* Read(int );
+	Object* Read(long long );
 
 };

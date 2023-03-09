@@ -24,7 +24,7 @@ public:
 
     }
     static  bool isEndOfDirectory(string** sector);
-    Object* Read( int );
+    Object* Read( long long );
 
 };
 

@@ -7,5 +7,5 @@ class Reader : public Object
 public:
 	string toString() { return ""; }
 	 
-	virtual Object* Read(int) = 0 ;
+	virtual Object* Read(long long) = 0 ;
 };

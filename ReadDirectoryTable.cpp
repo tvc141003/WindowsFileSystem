@@ -17,7 +17,7 @@ bool ReadDirectoryTable::isEndOfDirectory(string** sector)
     
 }
 
-Object* ReadDirectoryTable::Read(int point)
+Object* ReadDirectoryTable::Read(long long point)
 {
 
     string** directory = NULL;

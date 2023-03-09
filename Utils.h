@@ -24,13 +24,16 @@ using std::setfill;
 #define EMPTY_ENTRY 0x00
 #define EMPTY_BYTE 0x20
 #define EOB 0xff
-#define HARD_DISK L"\\\\.\\E:"
+#define ENTRY_USED 0x01
+#define ENTRY_FOLDER 0x02
+#define MFT_ROW 64
+#define MFT_COLUMN 16
+#define END_OF_MFT_ENTRY 0xffffffff
+#define HARD_DISK L"\\\\.\\G:"
 #define ENTER 13
 #define ARROW 224
 #define UP 72
 #define DOWN 80
-#define MFT_ROW 64
-#define MFT_COLUMN 16
 
 namespace Utils {
 	class Int {

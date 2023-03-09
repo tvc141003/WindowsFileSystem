@@ -1,14 +1,31 @@
 #pragma once
-#include"Entry.h"
+#include <vector>
+
+#include "Entry.h"
+#include "Attribute.h"
+
+using std::vector;
 
 class MFTEntry : public Entry
 {
 public:
 	MFTEntry();
-	MFTEntry(string**&);
+	MFTEntry(int, int, int, int, vector<Attribute*>&);
+
 public:
-	string**& getEntry();
-	void setEntry(string**&);
+	int byteBeginAttribute();
+	int flag();
+	int byteOfEntry();
+	int nextAttributeId();
+	vector<Attribute*>& attributes();
+
+	void setByteBeginAttribute(int);
+	void setFlag(int);
+	void setByteOfEntry(int);
+	void setNextAttributeId(int);
+	void setAttributes(vector<Attribute*>&);
+
+public:
 	string toString();
 	string info() {
 		return "";
@@ -17,7 +34,9 @@ public:
 
 
 private:
-	string** _entry; // 1024 byte // 64x16 
-
-
+	int _byteBeginAttribute;
+	int _flag;
+	int _byteOfEntry;
+	int _nextAttributeId;
+	vector<Attribute*> _attributes;
 };
