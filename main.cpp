@@ -10,6 +10,7 @@
 #include "BiosParameterBlockMapper.h"
 #include "MFTEntry.h"
 #include "ReadMFTEntry.h"
+#include "MFTTable.h"
 
 using std::string, std::cin;
 
@@ -81,16 +82,12 @@ int main(int argc, char** argv)
    // cout << " 1";
   //  BootSector* bootSector = getBootSector();
   //  IValueMapper* mapper = new BootSectorMapper;
-
   //  map<string, int> bootSectorMapper = mapper->mapper(bootSector);
   //  int point = bootSectorMapper["Sb"] + bootSectorMapper["Nf"] * bootSectorMapper["Sf"]; 
   //  ReadDirectoryTable* reader = new ReadDirectoryTable();
-
   //  DirectoryTable* directory = dynamic_cast<DirectoryTable*> (reader->Read(point));
   ////  directory->child();
-
   //  RootDirectoryTable* RDET = dynamic_cast<RootDirectoryTable*> (directory);
-
   //  MainEntry* mainEntry = dynamic_cast<MainEntry*>(RDET->entrys()[0]);
   //  int startCluster = bootSectorMapper["ClusterBeginRDET"];
   //  string name = mainEntry->headName();
@@ -98,8 +95,8 @@ int main(int argc, char** argv)
   //  folder->init();
   //  //cout << folder->name();
   //  program(folder);
-
   //  return 0;
+
     BYTE sector[512];
     string** sectors = ReadSector(HARD_DISK, 0, sector);
     /*for (int i = 0; i < 32; i++) {
@@ -114,12 +111,22 @@ int main(int argc, char** argv)
         cout << i.first << " " << i.second<<endl;
     }*/
     long long start = mp["ClusterBeginMFT"] * mp["Sc"];
-    
-    long long readpoint = start * 512;
-    Reader* reader = new ReadMFTEntry;
+    MFTTable* NTFSMFTtable = new MFTTable(); 
+    int count = 0;
+    while (true) {
+        long long readPoint = start;
+        Reader* reader = new ReadMFTEntry;
 
-    Object* entry = dynamic_cast<MFTEntry*>(reader->Read(readpoint));
-    cout << entry->toString();
+        MFTEntry* entry = dynamic_cast<MFTEntry*>(reader->Read(readPoint * 512));
+        //if (entry->isValid() == false) break;
+        
+        NTFSMFTtable->entrys().push_back(entry);
+        start += 2;
+        count++;
+        if (count > 100) break;
+    }
+
+    cout << NTFSMFTtable->toString();
 
     
     

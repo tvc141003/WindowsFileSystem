@@ -3,6 +3,8 @@
 
 #include "Entry.h"
 #include "Attribute.h"
+#include "FileNameAttribute.h"
+#include "DataAttribute.h"
 
 using std::vector;
 
@@ -10,7 +12,7 @@ class MFTEntry : public Entry
 {
 public:
 	MFTEntry();
-	MFTEntry(int, int, int, int, vector<Attribute*>&);
+	MFTEntry(int, int, int, int, vector<Attribute*>&, bool);
 
 public:
 	int byteBeginAttribute();
@@ -27,6 +29,7 @@ public:
 
 public:
 	string toString();
+	bool isValid();
 	string info() {
 		return "";
 	};
@@ -39,4 +42,5 @@ private:
 	int _byteOfEntry;
 	int _nextAttributeId;
 	vector<Attribute*> _attributes;
+	bool _isValid;
 };

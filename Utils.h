@@ -34,7 +34,8 @@ using std::setfill;
 #define ARROW 224
 #define UP 72
 #define DOWN 80
-
+#define FILE_NAME_ATTRIBUTE 48
+#define DATA_ATTRIBUTE 128
 namespace Utils {
 	class Int {
 	public:

@@ -1,6 +1,7 @@
 #pragma once
 #include <sstream>
 #include "Object.h"
+#include "Utils.h"
 
 using std::stringstream, std::endl;
 
@@ -27,9 +28,10 @@ public:
 	void setIdentify(int);
 
 public:
+
 	string toString();
 
-private:
+protected:
 	int _id;
 	int _size;
 	int _nonResident;
