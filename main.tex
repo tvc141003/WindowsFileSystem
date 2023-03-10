@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{biblatex}
+\usepackage[dvips]{color}
+\DeclareTextSymbolDefault{\DH}{T1}
+\usepackage{graphicx}
+\graphicspath{ {Images/} }
+\usepackage{setspace}
+\usepackage{indentfirst}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{xhfill}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{diagbox}
+
+
+\usepackage{tikz}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=C++,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\onehalfspacing
+
+\usepackage[
+  top=25mm,
+  bottom=20mm,
+  left=20mm,
+  right=20mm,
+  footskip = 15mm,
+  [includefoot]{geometry}
+
+\renewcommand{\labelenumi}{\alph{enumi}.}
+\renewcommand{\figurename}{\bf Hình}
+\renewcommand{\contentsname}{\bf Mục lục}
+\renewcommand{\listfigurename}{\bf Danh sách hình}
+\renewcommand{\appendixname}{\bf Phụ lục}
+
+\begin{document}
+
+\input{TitlePg}
+\tableofcontents
+\newpage
+\thispagestyle{empty}
+\clearpage
+\listoffigures
+\thispagestyle{empty}
+\newpage
+
+\include{CHAPTER 1/BangPhanCong}
+\include{CHAPTER 1/1_ReadBootSector}
+\end{document}
