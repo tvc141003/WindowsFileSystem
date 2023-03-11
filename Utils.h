@@ -95,7 +95,7 @@ namespace Utils {
 			long long decimal = 0;
 
 			for (int i = hex.length() - 1; i >= 0; i--) {
-				decimal = decimal + hexToDec[hex[i]] * int(pow(16, index));
+				decimal = decimal + hexToDec[hex[i]] * long long(pow(16, index));
 				index++;
 			}
 

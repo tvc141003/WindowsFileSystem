@@ -170,21 +170,40 @@ Object* ReadMFTEntry::Read(long long point) {
         int beginOffset = Utils::Int::convertHexToDecimal(buffer.str());
         buffer.str("");
 
-        string content = "";
-        for (int i = beginOffset + startAttribute; i <= startAttribute + beginOffset + sizeContent; i++) {
-            int row = i / 16;
-            int column = i % 16;
-
-            buffer << str[row][column];
-        }
-        content = buffer.str();
         if (typeID == FILE_NAME_ATTRIBUTE)
         {
-            FileNameAttribute* fileNameAttr = new FileNameAttribute(typeID, size, resident, nameLength, positionName, flags, identify, sizeContent, beginOffset, content);
+            long long fileRef;
+            for (int i = beginOffset + startAttribute + 7; i >= beginOffset + startAttribute; i--) {
+                int row = i / 16;
+                int column = i % 16;
+
+                buffer << str[row][column];
+            }
+            
+            fileRef = Utils::LongLong::convertHexToDecimal(buffer.str());
+            buffer.str("");
+
+            string content = "";
+            for (int i = beginOffset + startAttribute + 66; i <= startAttribute + beginOffset + sizeContent; i++) {
+                int row = i / 16;
+                int column = i % 16;
+
+                buffer << str[row][column];
+            }
+            content = buffer.str();
+            FileNameAttribute* fileNameAttr = new FileNameAttribute(typeID, size, resident, nameLength, positionName, flags, identify, sizeContent, beginOffset, fileRef, content);
             attributes.push_back(fileNameAttr);
         }
         else if (typeID == DATA_ATTRIBUTE)
         {
+            string content = "";
+            for (int i = beginOffset + startAttribute; i <= startAttribute + beginOffset + sizeContent; i++) {
+                int row = i / 16;
+                int column = i % 16;
+
+                buffer << str[row][column];
+            }
+            content = buffer.str();
             DataAttribute* dataAttr = new DataAttribute(typeID, size, resident, nameLength, positionName, flags, identify, sizeContent, beginOffset, content);
             //dataAttr->initContent();
             attributes.push_back(dataAttr);

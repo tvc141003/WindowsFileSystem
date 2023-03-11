@@ -3,7 +3,9 @@
 #include "IValueMapper.h"
 #include "FatTableMapper.h"
 #include "BootSector.h"
-#include"FatTable.h" 
+#include "FatTable.h" 
+#include "BiosParameterBlock.h"
+#include "BiosParameterBlockMapper.h"
 
 
 inline string** ReadSector(LPCWSTR drive, int readPoint, BYTE sector[512])
@@ -131,5 +133,13 @@ inline BootSector* getBootSector() {
     return bootSector;
 }
 
+inline long long getMFTEntryIndex(long long point) {
+    BYTE sector[512];
+    string** sectors = ReadSector(HARD_DISK, 0, sector);
+    BiosParameterBlock* BPB = new BiosParameterBlock(sectors);
+    BiosParameterBlockMapper* mapper = new BiosParameterBlockMapper;
+    map<string, int> mp = mapper->mapper(BPB);
 
-
+    long long index = (point - mp["ClusterBeginMFT"] * mp["Sc"]) / 1024;
+    return index;
+}
