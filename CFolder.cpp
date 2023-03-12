@@ -17,6 +17,12 @@ CFolder::CFolder(string name, int startCluster) {
 	this->_item = {};
 }
 
+CFolder::CFolder(string name, int startCluster, vector<CItem*> items) {
+	this->_name = name;
+	this->_startCluster = startCluster;
+	this->_item = items;
+}
+
 
 void CFolder::init() {
 	if (!this->_item.empty()) return;
@@ -127,7 +133,7 @@ string CFolder::toString()
 	return "Cfolder";
 
 }
-vector<CItem* > CFolder::Item()
+vector<CItem*>& CFolder::Item()
 {
 	return this->_item;
 
@@ -159,7 +165,27 @@ void CFolder::show(int index)
 	cout << this->_item[0]->info();
 	cout << this->_item[1]->info();
 	cout << "========================================================" << endl;
-	for (int i = 2; i < this->Item().size(); i++)
+	for (int i = 0; i < this->Item().size(); i++)
+	{
+		if (i == index) {
+			ConsoleColor* color = new ConsoleColor(static_cast<int>(Colors::YELLOW), static_cast<int>(Colors::BLACK));
+			ConsoleModifySetColor* setColor = new ConsoleModifySetColor;
+			setColor->modify(color);
+			cout << this->Item()[i]->name() << endl;
+			color->setDefault();
+			setColor->modify(color);
+		}
+		else {
+			cout << this->Item()[i]->name() << endl;
+		}
+	}
+}
+
+void CFolder::showNTFS(int index) {
+	cout << "Name: " << this->_name << endl;
+	cout << "Start Cluster: " << this->_startCluster << endl;
+	cout << "========================================================" << endl;
+	for (int i = 0; i < this->Item().size(); i++)
 	{
 		if (i == index) {
 			ConsoleColor* color = new ConsoleColor(static_cast<int>(Colors::YELLOW), static_cast<int>(Colors::BLACK));

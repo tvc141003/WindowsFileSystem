@@ -14,13 +14,14 @@ class CFolder : public CItem {
 public:
 	CFolder();
 	CFolder(string, int);
+	CFolder(string, int, vector<CItem*>);
 
 	~CFolder();
 
 public:
 	string toString();
 	//CFolder(RootDirectoryTable*);
-	vector<CItem*> Item();
+	vector<CItem*>& Item();
 	int startCluster();
 	string name();
 	void setName(string );
@@ -28,6 +29,8 @@ public:
 	void show(int); 
 	string type();
 	string info();
+	void showNTFS(int);
+
 public:
 	void init();
 

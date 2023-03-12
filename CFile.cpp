@@ -5,18 +5,28 @@ CFile::CFile()
 	this->_name = "";
 	this->_size = 0;
 	this->_startCluster = 0;
+	this->_content = "";
 }
 CFile::CFile(string name, int startCluster)
 {
 	this->_name = name;
 	this->_startCluster = startCluster;
-
+	this->_content = "";
+	this->_size = 0;
 }
 
 CFile::CFile(string name, int startCluster, int size) {
 	this->_name = name;
 	this->_startCluster = startCluster;
 	this->_size = size;
+	this->_content = "";
+}
+
+CFile::CFile(string name, int startCluster, int size, string content) {
+	this->_name = name;
+	this->_startCluster = startCluster;
+	this->_size = size;
+	this->_content = content;
 }
 
 string CFile::toString()
@@ -168,4 +178,16 @@ string CFile::info() {
 	builder << endl;
 	string result = builder.str();
 	return result;
+}
+
+void CFile::showNTFS(int index) {
+	cout << "Name: " << this->_name << endl;
+	cout << "Start Cluster: " << this->_startCluster << endl;
+	cout << "Data size: " << this->_size << endl;
+	cout << "=================================================" << endl;
+	vector<string> names = Utils::String::split(this->_name, ".");
+	if (names[names.size() - 1] != "txt") {
+		cout << "Don't support file " << names[names.size() - 1];
+	} else 
+	cout << Utils::String::convertHexToString(this->_content);
 }

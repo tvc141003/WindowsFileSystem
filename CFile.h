@@ -19,8 +19,9 @@ class CFile : public CItem
 {
 public:
 	CFile();
-	CFile(string , int s);
+	CFile(string , int);
 	CFile(string, int, int);
+	CFile(string, int, int, string);
 
 public:
 	string name(); 
@@ -35,7 +36,9 @@ public:
 	void show(int);
 	string type();
 	string info();
+	void showNTFS(int);
 
 private:
 	int _size;
+	string _content;
 };

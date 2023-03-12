@@ -20,6 +20,7 @@ public:
 	int byteOfEntry();
 	int nextAttributeId();
 	vector<Attribute*>& attributes();
+	long long ref();
 
 	void setByteBeginAttribute(int);
 	void setFlag(int);
@@ -34,6 +35,7 @@ public:
 		return "";
 	};
 	string type() { return ""; };
+	string getName();
 
 
 private:

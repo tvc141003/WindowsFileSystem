@@ -11,14 +11,15 @@
 #include "MFTEntry.h"
 #include "ReadMFTEntry.h"
 #include "MFTTable.h"
+#include "TreeFolder.h"
+#include <stack>
 
-using std::string, std::cin;
+using std::string, std::cin, std::stack;
 
 void program(CItem* item)
 {
     if (item->type() == "CFolder") {
         CFolder* folder = dynamic_cast<CFolder*>(item);
-        cout << 1;
         int index = 2;
         while (true) {
             system("cls");
@@ -77,13 +78,74 @@ void program(CItem* item)
     }
   
 }
+
+void programNTFS(CItem* item) {
+    if (item->type() == "CFolder") {
+        CFolder* folder = dynamic_cast<CFolder*>(item);
+        int index = 0;
+        while (true) {
+            system("cls");
+
+            folder->showNTFS(index);
+            unsigned char key = _getch();
+            if (int(key) == ARROW) {
+                unsigned char arrow = _getch();
+                switch (arrow) {
+                case static_cast<int>(UP): {
+                    int newSelect = max(index - 1, 0);
+                    index = newSelect;
+                    break;
+                }
+
+                case static_cast<int>(DOWN): {
+                    int newSelect = min(index + 1, folder->Item().size() - 1);
+                    index = newSelect;
+                    break;
+                }
+                }
+            }
+            else {
+                switch (key) {
+                case static_cast<int>(ENTER):
+                    if (folder->Item()[index]->type() == "CFile") {
+                        CItem* file = folder->Item()[index];
+                        programNTFS(file);
+                    }
+                    else {
+                        CFolder* subFolder = dynamic_cast<CFolder*>(folder->Item()[index]);
+                        programNTFS(subFolder);
+                    }
+                    break;
+
+                case static_cast<int>(ESC):
+                    return;
+                }
+            }
+        }
+    }
+    else {
+        CFile* file = dynamic_cast<CFile*>(item);
+        while (true) {
+            system("cls");
+            file->showNTFS(0);
+            unsigned char key = _getch();
+
+            switch (key) {
+            case static_cast<int>(ESC):
+                return;
+            }
+
+        }
+    }
+}
+
 int main(int argc, char** argv)
 {
    // cout << " 1";
-  //  BootSector* bootSector = getBootSector();
-  //  IValueMapper* mapper = new BootSectorMapper;
-  //  map<string, int> bootSectorMapper = mapper->mapper(bootSector);
-  //  int point = bootSectorMapper["Sb"] + bootSectorMapper["Nf"] * bootSectorMapper["Sf"]; 
+    /*BootSector* bootSector = getBootSector();
+    IValueMapper* mapper = new BootSectorMapper;
+    map<string, int> bootSectorMapper = mapper->mapper(bootSector);*/
+    //int point = bootSectorMapper["Sb"] + bootSectorMapper["Nf"] * bootSectorMapper["Sf"]; 
   //  ReadDirectoryTable* reader = new ReadDirectoryTable();
   //  DirectoryTable* directory = dynamic_cast<DirectoryTable*> (reader->Read(point));
   ////  directory->child();
@@ -96,7 +158,9 @@ int main(int argc, char** argv)
   //  //cout << folder->name();
   //  program(folder);
   //  return 0;
+    
 
+    //NFTS time
     BYTE sector[512];
     string** sectors = ReadSector(HARD_DISK, 0, sector);
     /*for (int i = 0; i < 32; i++) {
@@ -126,9 +190,30 @@ int main(int argc, char** argv)
         if (count > 100) break;
     }
 
-    cout << NTFSMFTtable->toString();
-
+    //cout << NTFSMFTtable->toString();
+    vector<MFTEntry*> TreeMFT = {};
+    bool endOfSystemEntry = false;
+    for (MFTEntry* entry : NTFSMFTtable->entrys()) {
+        if (Utils::String::convertHexToString(entry->getName()) == "IndexerVolumeGuid") {
+            endOfSystemEntry = true;
+        } 
+        else if (endOfSystemEntry == false) continue;
+        else {
+            TreeMFT.push_back(entry);
+        }
+    }
     
+
+    TreeFolder* builder = new TreeFolder;
+    CFolder* folderSystem = new CFolder("System", mp["ClusterBeginMFT"], {});
+    vector <long long> backTrack;
+    vector <CFolder*> folderParent;
+
+    folderParent.push_back(folderSystem);
+    backTrack.push_back(-1);
+    builder->build(TreeMFT, 0, backTrack, folderParent);
+
+    programNTFS(folderSystem);
     
    // BPB->toString();
 }

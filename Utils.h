@@ -117,6 +117,7 @@ namespace Utils {
 			for (int i = 0; i < len; i += 2)
 			{
 				string byte = hex.substr(i, 2);
+				if (byte == "00") continue;
 				if (Utils::Int::convertHexToDecimal(byte) == EOB) continue;
 				char chr = (char)(int)strtol(byte.c_str(), NULL, 16);
 				newString.push_back(chr);

@@ -43,6 +43,9 @@ void FileNameAttribute::setFileRef(long long fileRef) {
 	this->_fileRef = fileRef;
 }
 
+string FileNameAttribute::content() {
+	return this->_content;
+}
 
 string FileNameAttribute::toString() 
 {

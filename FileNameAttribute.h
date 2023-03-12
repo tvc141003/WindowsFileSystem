@@ -12,6 +12,7 @@ public:
 	int contentSize();
 	int beginOffset();
 	long long fileRef();
+	string content();
 
 	void setFileRef(long long);
 	void setContentSize(int);

@@ -44,6 +44,10 @@ vector<Attribute*>& MFTEntry::attributes() {
 	return this->_attributes;
 }
 
+long long MFTEntry::ref() {
+	return this->_ref;
+}
+
 void MFTEntry::setByteBeginAttribute(int byteBegin) {
 	this->_byteBeginAttribute = byteBegin;
 }
@@ -78,6 +82,20 @@ string MFTEntry::toString()
 	builder << "nextAttributeId: " << this->_nextAttributeId << endl;
 	for (auto attri : this->_attributes) {
 		builder << attri->toString() << endl;
+	}
+
+	string result = builder.str();
+	return result;
+}
+
+string MFTEntry::getName() {
+	stringstream builder;
+	for (int i = 0; i < this->_attributes.size(); i++) {
+		if (this->_attributes[i]->id() == 0x30) {
+			FileNameAttribute* fileName = dynamic_cast<FileNameAttribute*>(this->_attributes[i]);
+			builder << fileName->content();
+			break;
+		}
 	}
 
 	string result = builder.str();
