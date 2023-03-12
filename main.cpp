@@ -119,8 +119,8 @@ int main(int argc, char** argv)
 
         MFTEntry* entry = dynamic_cast<MFTEntry*>(reader->Read(readPoint * 512));
         //if (entry->isValid() == false) break;
-        
-        NTFSMFTtable->entrys().push_back(entry);
+        if (entry != NULL)
+            NTFSMFTtable->entrys().push_back(entry);
         start += 2;
         count++;
         if (count > 100) break;

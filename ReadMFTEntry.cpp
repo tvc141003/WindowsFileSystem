@@ -66,9 +66,7 @@ Object* ReadMFTEntry::Read(long long point) {
     isValid = Utils::String::convertHexToString(builder.str()) == "FILE" ? true : false;
 
     if (isValid == false) {
-        vector<Attribute*> attributes = {};
-        MFTEntry* entry = new MFTEntry(byteBeginAttribute, flag, byteOfEntry, nextAttributeId, attributes, isValid);
-        return entry;
+        return NULL;
     }
 
     //get attributes
@@ -184,7 +182,7 @@ Object* ReadMFTEntry::Read(long long point) {
             buffer.str("");
 
             string content = "";
-            for (int i = beginOffset + startAttribute + 66; i <= startAttribute + beginOffset + sizeContent; i++) {
+            for (int i = beginOffset + startAttribute + 66; i < startAttribute + beginOffset + sizeContent; i++) {
                 int row = i / 16;
                 int column = i % 16;
 
@@ -221,6 +219,6 @@ Object* ReadMFTEntry::Read(long long point) {
         startAttribute = startAttribute + size;
     }
 
-    MFTEntry* entry = new MFTEntry(byteBeginAttribute, flag, byteOfEntry, nextAttributeId, attributes, isValid);
+    MFTEntry* entry = new MFTEntry(byteBeginAttribute, flag, byteOfEntry, nextAttributeId, attributes, isValid, point);
 	return entry;
 }

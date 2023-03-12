@@ -12,7 +12,7 @@ class MFTEntry : public Entry
 {
 public:
 	MFTEntry();
-	MFTEntry(int, int, int, int, vector<Attribute*>&, bool);
+	MFTEntry(int, int, int, int, vector<Attribute*>&, bool, long long);
 
 public:
 	int byteBeginAttribute();
@@ -43,4 +43,5 @@ private:
 	int _nextAttributeId;
 	vector<Attribute*> _attributes;
 	bool _isValid;
+	long long _ref;
 };

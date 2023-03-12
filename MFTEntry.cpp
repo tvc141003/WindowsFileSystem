@@ -12,7 +12,7 @@ MFTEntry::MFTEntry()
 	this->_isValid = false;
 }
 
-MFTEntry::MFTEntry(int byteBegin, int flag, int byteOfEntry, int nextId, vector<Attribute*>& attributes, bool valid)
+MFTEntry::MFTEntry(int byteBegin, int flag, int byteOfEntry, int nextId, vector<Attribute*>& attributes, bool valid, long long ref)
 {
 	this->_byteBeginAttribute = byteBegin;
 	this->_byteOfEntry = byteOfEntry;
@@ -20,6 +20,7 @@ MFTEntry::MFTEntry(int byteBegin, int flag, int byteOfEntry, int nextId, vector<
 	this->_nextAttributeId = nextId;
 	this->_attributes = attributes;
 	this->_isValid = valid;
+	this->_ref = ref;
 }
 
 
@@ -70,6 +71,7 @@ bool MFTEntry::isValid() {
 string MFTEntry::toString()
 {
 	stringstream builder;
+	builder << "References: " << this->_ref << endl;
 	builder << "byteBeginAttribute: " << this->_byteBeginAttribute << endl;
 	builder << "flag: " << this->_flag << endl;
 	builder << "byteOfEntry: " << this->_byteOfEntry << endl;
