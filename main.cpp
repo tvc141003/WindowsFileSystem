@@ -139,9 +139,81 @@ void programNTFS(CItem* item) {
     }
 }
 
+void runFAT32() {
+    BootSector* bootSector = getBootSector();
+    IValueMapper* mapper = new BootSectorMapper;
+    map<string, int> bootSectorMapper = mapper->mapper(bootSector);
+    int point = bootSectorMapper["Sb"] + bootSectorMapper["Nf"] * bootSectorMapper["Sf"]; 
+    ReadDirectoryTable* reader = new ReadDirectoryTable();
+    DirectoryTable* directory = dynamic_cast<DirectoryTable*> (reader->Read(point));
+
+    RootDirectoryTable* RDET = dynamic_cast<RootDirectoryTable*> (directory);
+    MainEntry* mainEntry = dynamic_cast<MainEntry*>(RDET->entrys()[0]);
+    int startCluster = bootSectorMapper["ClusterBeginRDET"];
+    string name = mainEntry->headName();
+    CFolder* folder = new CFolder(name, startCluster); // Disk
+    folder->init();
+
+    program(folder);
+}
+
+void runNTFS() {
+    BYTE sector[512];
+    string** sectors = ReadSector(HARD_DISK, 0, sector);
+
+    BiosParameterBlock* BPB = new BiosParameterBlock(sectors);
+    BiosParameterBlockMapper* mapper = new BiosParameterBlockMapper;
+    map<string, int> mp = mapper->mapper(BPB);
+
+    long long start = mp["ClusterBeginMFT"] * mp["Sc"];
+    MFTTable* NTFSMFTtable = new MFTTable();
+    int count = 0;
+    while (true) {
+        long long readPoint = start;
+        Reader* reader = new ReadMFTEntry;
+
+        MFTEntry* entry = dynamic_cast<MFTEntry*>(reader->Read(readPoint * 512));
+
+        if (entry != NULL)
+            NTFSMFTtable->entrys().push_back(entry);
+        start += 2;
+        count++;
+        if (count > 100) break;
+    }
+
+    vector<MFTEntry*> TreeMFT = {};
+    bool endOfSystemEntry = false;
+    for (MFTEntry* entry : NTFSMFTtable->entrys()) {
+        if (Utils::String::convertHexToString(entry->getName()) == "IndexerVolumeGuid") {
+            endOfSystemEntry = true;
+        }
+        else if (endOfSystemEntry == false) continue;
+        else {
+            TreeMFT.push_back(entry);
+        }
+    }
+
+
+    TreeFolder* builder = new TreeFolder;
+    CFolder* folderSystem = new CFolder("System", mp["ClusterBeginMFT"], {});
+    vector <long long> backTrack;
+    vector <CFolder*> folderParent;
+
+    folderParent.push_back(folderSystem);
+    backTrack.push_back(-1);
+    builder->build(TreeMFT, 0, backTrack, folderParent);
+
+    programNTFS(folderSystem);
+}
+
 int main(int argc, char** argv)
 {
-   // cout << " 1";
+    //Delete comment and run your choice
+    //runFAT32();
+    //runNTFS();
+
+
+
     /*BootSector* bootSector = getBootSector();
     IValueMapper* mapper = new BootSectorMapper;
     map<string, int> bootSectorMapper = mapper->mapper(bootSector);*/
@@ -161,59 +233,61 @@ int main(int argc, char** argv)
     
 
     //NFTS time
-    BYTE sector[512];
-    string** sectors = ReadSector(HARD_DISK, 0, sector);
-    /*for (int i = 0; i < 32; i++) {
-        for (int j = 0; j < 16; j++) cout << sectors[i][j] << " ";
-        cout << endl;
-    }*/
-    BiosParameterBlock* BPB = new BiosParameterBlock(sectors);
-    BiosParameterBlockMapper* mapper = new BiosParameterBlockMapper;
-    map<string, int> mp =  mapper->mapper(BPB);
-   /* for (auto i : mp)
-    {
-        cout << i.first << " " << i.second<<endl;
-    }*/
-    long long start = mp["ClusterBeginMFT"] * mp["Sc"];
-    MFTTable* NTFSMFTtable = new MFTTable(); 
-    int count = 0;
-    while (true) {
-        long long readPoint = start;
-        Reader* reader = new ReadMFTEntry;
+   // BYTE sector[512];
+   // string** sectors = ReadSector(HARD_DISK, 0, sector);
+   // /*for (int i = 0; i < 32; i++) {
+   //     for (int j = 0; j < 16; j++) cout << sectors[i][j] << " ";
+   //     cout << endl;
+   // }*/
+   // BiosParameterBlock* BPB = new BiosParameterBlock(sectors);
+   // BiosParameterBlockMapper* mapper = new BiosParameterBlockMapper;
+   // map<string, int> mp =  mapper->mapper(BPB);
+   ///* for (auto i : mp)
+   // {
+   //     cout << i.first << " " << i.second<<endl;
+   // }*/
+   // long long start = mp["ClusterBeginMFT"] * mp["Sc"];
+   // MFTTable* NTFSMFTtable = new MFTTable(); 
+   // int count = 0;
+   // while (true) {
+   //     long long readPoint = start;
+   //     Reader* reader = new ReadMFTEntry;
 
-        MFTEntry* entry = dynamic_cast<MFTEntry*>(reader->Read(readPoint * 512));
-        //if (entry->isValid() == false) break;
-        if (entry != NULL)
-            NTFSMFTtable->entrys().push_back(entry);
-        start += 2;
-        count++;
-        if (count > 100) break;
-    }
+   //     MFTEntry* entry = dynamic_cast<MFTEntry*>(reader->Read(readPoint * 512));
+   //     //if (entry->isValid() == false) break;
+   //     if (entry != NULL)
+   //         NTFSMFTtable->entrys().push_back(entry);
+   //     start += 2;
+   //     count++;
+   //     if (count > 100) break;
+   // }
 
-    //cout << NTFSMFTtable->toString();
-    vector<MFTEntry*> TreeMFT = {};
-    bool endOfSystemEntry = false;
-    for (MFTEntry* entry : NTFSMFTtable->entrys()) {
-        if (Utils::String::convertHexToString(entry->getName()) == "IndexerVolumeGuid") {
-            endOfSystemEntry = true;
-        } 
-        else if (endOfSystemEntry == false) continue;
-        else {
-            TreeMFT.push_back(entry);
-        }
-    }
-    
+   // //cout << NTFSMFTtable->toString();
+   // vector<MFTEntry*> TreeMFT = {};
+   // bool endOfSystemEntry = false;
+   // for (MFTEntry* entry : NTFSMFTtable->entrys()) {
+   //     if (Utils::String::convertHexToString(entry->getName()) == "IndexerVolumeGuid") {
+   //         endOfSystemEntry = true;
+   //     } 
+   //     else if (endOfSystemEntry == false) continue;
+   //     else {
+   //         TreeMFT.push_back(entry);
+   //     }
+   // }
+   // 
 
-    TreeFolder* builder = new TreeFolder;
-    CFolder* folderSystem = new CFolder("System", mp["ClusterBeginMFT"], {});
-    vector <long long> backTrack;
-    vector <CFolder*> folderParent;
+   // TreeFolder* builder = new TreeFolder;
+   // CFolder* folderSystem = new CFolder("System", mp["ClusterBeginMFT"], {});
+   // vector <long long> backTrack;
+   // vector <CFolder*> folderParent;
 
-    folderParent.push_back(folderSystem);
-    backTrack.push_back(-1);
-    builder->build(TreeMFT, 0, backTrack, folderParent);
+   // folderParent.push_back(folderSystem);
+   // backTrack.push_back(-1);
+   // builder->build(TreeMFT, 0, backTrack, folderParent);
 
-    programNTFS(folderSystem);
+   // programNTFS(folderSystem);
     
    // BPB->toString();
+
+    return 0;
 }
