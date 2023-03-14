@@ -165,7 +165,7 @@ void CFolder::show(int index)
 	cout << this->_item[0]->info();
 	cout << this->_item[1]->info();
 	cout << "========================================================" << endl;
-	for (int i = 0; i < this->Item().size(); i++)
+	for (int i = 2; i < this->Item().size(); i++)
 	{
 		if (i == index) {
 			ConsoleColor* color = new ConsoleColor(static_cast<int>(Colors::YELLOW), static_cast<int>(Colors::BLACK));
